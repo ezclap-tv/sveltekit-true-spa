@@ -9,6 +9,10 @@ jobs:
     name: Deploy to gh-pages
     runs-on: ubuntu-latest
     steps:
+      - run: echo "REPOSITORY_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+        shell: bash
+      - run: echo "${{ env.REPOSITORY_NAME }}"
+        shell: bash
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -18,6 +22,8 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - run: yarn
       - run: yarn build
+        env:
+          BASE_PATH: ${{ env.REPOSITORY_NAME }}
       - uses: JamesIves/github-pages-deploy-action@4.1.1
         with:
           single-commit: true
